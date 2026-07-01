@@ -1,0 +1,15 @@
+{
+  "name": "syncslot-monorepo",
+  "private": true,
+  "packageManager": "npm@10",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace web",
+    "dev:api": "npm run start:dev --workspace api",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces"
+  }
+}

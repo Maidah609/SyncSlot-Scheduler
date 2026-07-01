@@ -1,0 +1,195 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * SyncSlot design system.
+ * Palette: warm ivory background, charcoal text, dusty teal accent.
+ * Typography: Instrument Serif for display, Inter for UI.
+ */
+
+:root {
+  --radius: 0.5rem;
+
+  --background: oklch(0.985 0.006 85);        /* #FBFAF7 warm ivory */
+  --foreground: oklch(0.32 0.015 195);        /* #2C3E3E charcoal */
+
+  --surface: oklch(1 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.32 0.015 195);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.32 0.015 195);
+
+  --primary: oklch(0.62 0.033 190);           /* #6E9695 dusty teal */
+  --primary-foreground: oklch(0.985 0.006 85);
+
+  --secondary: oklch(0.955 0.006 90);         /* soft stone */
+  --secondary-foreground: oklch(0.32 0.015 195);
+
+  --muted: oklch(0.955 0.006 90);
+  --muted-foreground: oklch(0.52 0.012 200);  /* slate */
+
+  --accent: oklch(0.94 0.012 190);
+  --accent-foreground: oklch(0.32 0.015 195);
+
+  --destructive: oklch(0.55 0.15 28);
+  --destructive-foreground: oklch(0.985 0.006 85);
+
+  --border: oklch(0.32 0.015 195 / 0.10);
+  --input: oklch(0.32 0.015 195 / 0.14);
+  --ring: oklch(0.62 0.033 190 / 0.55);
+
+  --chart-1: oklch(0.62 0.033 190);
+  --chart-2: oklch(0.72 0.025 195);
+  --chart-3: oklch(0.52 0.028 200);
+  --chart-4: oklch(0.82 0.018 190);
+  --chart-5: oklch(0.42 0.02 200);
+
+  --sidebar: oklch(0.98 0.006 85);
+  --sidebar-foreground: oklch(0.32 0.015 195);
+  --sidebar-primary: oklch(0.62 0.033 190);
+  --sidebar-primary-foreground: oklch(0.985 0.006 85);
+  --sidebar-accent: oklch(0.955 0.006 90);
+  --sidebar-accent-foreground: oklch(0.32 0.015 195);
+  --sidebar-border: oklch(0.32 0.015 195 / 0.08);
+  --sidebar-ring: oklch(0.62 0.033 190 / 0.4);
+
+  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --shadow-soft: 0 1px 2px oklch(0.32 0.015 195 / 0.04), 0 8px 24px -12px oklch(0.32 0.015 195 / 0.10);
+}
+
+.dark {
+  --background: oklch(0.19 0.008 200);           /* deep charcoal-teal */
+  --foreground: oklch(0.94 0.006 90);            /* warm ivory text */
+
+  --surface: oklch(0.225 0.009 200);
+  --card: oklch(0.225 0.009 200);
+  --card-foreground: oklch(0.94 0.006 90);
+  --popover: oklch(0.225 0.009 200);
+  --popover-foreground: oklch(0.94 0.006 90);
+
+  --primary: oklch(0.74 0.045 190);              /* lifted dusty teal */
+  --primary-foreground: oklch(0.18 0.008 200);
+
+  --secondary: oklch(0.26 0.01 200);
+  --secondary-foreground: oklch(0.94 0.006 90);
+
+  --muted: oklch(0.26 0.01 200);
+  --muted-foreground: oklch(0.70 0.012 195);
+
+  --accent: oklch(0.30 0.014 195);
+  --accent-foreground: oklch(0.94 0.006 90);
+
+  --destructive: oklch(0.62 0.16 28);
+  --destructive-foreground: oklch(0.98 0.006 85);
+
+  --border: oklch(0.94 0.006 90 / 0.10);
+  --input: oklch(0.94 0.006 90 / 0.14);
+  --ring: oklch(0.74 0.045 190 / 0.5);
+
+  --chart-1: oklch(0.74 0.045 190);
+  --chart-2: oklch(0.66 0.03 195);
+  --chart-3: oklch(0.82 0.03 190);
+  --chart-4: oklch(0.55 0.028 200);
+  --chart-5: oklch(0.90 0.02 190);
+
+  --sidebar: oklch(0.205 0.008 200);
+  --sidebar-foreground: oklch(0.94 0.006 90);
+  --sidebar-primary: oklch(0.74 0.045 190);
+  --sidebar-primary-foreground: oklch(0.18 0.008 200);
+  --sidebar-accent: oklch(0.26 0.01 200);
+  --sidebar-accent-foreground: oklch(0.94 0.006 90);
+  --sidebar-border: oklch(0.94 0.006 90 / 0.08);
+  --sidebar-ring: oklch(0.74 0.045 190 / 0.4);
+
+  --shadow-soft: 0 1px 2px oklch(0 0 0 / 0.4), 0 8px 24px -12px oklch(0 0 0 / 0.55);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+
+  --shadow-soft: var(--shadow-soft);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html, body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+}
+
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+@utility fade-in {
+  animation: syncslot-fade-in 400ms ease-out both;
+}
+
+@keyframes syncslot-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
