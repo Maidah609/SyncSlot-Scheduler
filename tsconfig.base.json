@@ -6,7 +6,10 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["apps/web/src/*"]
+      "@syncslot/slot-engine/*": ["packages/slot-engine/src/*"],
+      "@syncslot/database/*": ["packages/database/src/*"],
+      "@syncslot/types/*": ["packages/types/src/*"],
+      "@syncslot/config/*": ["packages/config/src/*"]
     }
   }
 }

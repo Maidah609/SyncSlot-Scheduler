@@ -1,15 +1,11 @@
 {
   "name": "syncslot-monorepo",
   "private": true,
-  "packageManager": "npm@10",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "packageManager": "pnpm@10.15.0",
   "scripts": {
-    "dev:web": "npm run dev --workspace web",
-    "dev:api": "npm run start:dev --workspace api",
-    "build": "npm run build --workspaces",
-    "lint": "npm run lint --workspaces"
+    "dev:web": "corepack pnpm --filter web dev",
+    "dev:api": "corepack pnpm --filter api start:dev",
+    "build": "corepack pnpm -r build",
+    "lint": "corepack pnpm -r lint"
   }
 }
