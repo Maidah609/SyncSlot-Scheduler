@@ -1,0 +1,275 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LocationType {
+  IN_PERSON
+  PHONE
+  VIDEO
+  CUSTOM
+}
+
+enum BookingQuestionType {
+  SHORT_TEXT
+  LONG_TEXT
+  SINGLE_SELECT
+  MULTI_SELECT
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum BookingAuditActorType {
+  HOST
+  INVITEE
+  SYSTEM
+}
+
+enum BookingAuditAction {
+  CREATED
+  CANCELLED
+  RESCHEDULED
+  REMINDER_SENT
+  CALENDAR_EVENT_CREATED
+  CALENDAR_EVENT_CANCELLED
+}
+
+enum CalendarProvider {
+  GOOGLE
+  MICROSOFT
+}
+
+enum NotificationDeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model User {
+  id                     String                  @id @default(cuid())
+  email                  String                  @unique
+  emailVerifiedAt        DateTime?
+  passwordHash           String?
+  name                   String
+  username               String                  @unique
+  title                  String                  @default("")
+  welcome                String                  @default("")
+  timezone               String
+  onboardingCompletedAt  DateTime?
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  credentialAccounts     CredentialAccount[]
+  emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens    PasswordResetToken[]
+  eventTypes             EventType[]
+  schedules              Schedule[]
+  hostedBookings         Booking[]
+  bookingAuditLogs       BookingAuditLog[]
+  calendarAccounts       CalendarAccount[]
+  webhookEndpoints       WebhookEndpoint[]
+
+  @@index([username])
+  @@index([email])
+}
+
+model CredentialAccount {
+  id                String           @id @default(cuid())
+  provider          CalendarProvider
+  providerAccountId String
+  userId            String
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EventType {
+  id               String             @id @default(cuid())
+  userId           String
+  title            String
+  slug             String
+  durationMinutes  Int
+  description      String?
+  color            String?
+  locationType     LocationType
+  locationValue    String?
+  cancellationPolicy String?
+  isActive         Boolean            @default(true)
+  minNoticeMins    Int                @default(0)
+  maxFutureDays    Int
+  bufferBeforeMins Int                @default(0)
+  bufferAfterMins  Int                @default(0)
+  dailyLimit       Int?
+  weeklyLimit      Int?
+  scheduleId       String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schedule         Schedule           @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
+  bookingQuestions BookingQuestion[]
+  bookings         Booking[]
+
+  @@unique([userId, slug])
+  @@index([userId])
+  @@index([userId, slug])
+}
+
+model BookingQuestion {
+  id          String              @id @default(cuid())
+  eventTypeId String
+  label       String
+  type        BookingQuestionType
+  isRequired  Boolean             @default(false)
+  options     Json?
+  order       Int
+  eventType   EventType           @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+}
+
+model Schedule {
+  id                String             @id @default(cuid())
+  userId            String
+  name              String
+  isDefault         Boolean            @default(false)
+  timezone          String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventTypes        EventType[]
+  availabilityRules AvailabilityRule[]
+  dateOverrides     DateOverride[]
+
+  @@index([userId])
+}
+
+model AvailabilityRule {
+  id        String   @id @default(cuid())
+  scheduleId String
+  dayOfWeek Int
+  startTime String   @db.VarChar(5)
+  endTime   String   @db.VarChar(5)
+  schedule  Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+}
+
+model DateOverride {
+  id        String    @id @default(cuid())
+  scheduleId String
+  date      DateTime  @db.Date
+  isClosed  Boolean   @default(false)
+  startTime String?   @db.VarChar(5)
+  endTime   String?   @db.VarChar(5)
+  schedule  Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id                String             @id @default(cuid())
+  eventTypeId       String
+  hostId            String
+  inviteeName       String
+  inviteeEmail      String
+  inviteeTimezone   String
+  startTime         DateTime
+  endTime           DateTime
+  status            BookingStatus      @default(CONFIRMED)
+  publicToken       String             @unique
+  answers           Json
+  notes             String?
+  rescheduledFromId String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  eventType         EventType          @relation(fields: [eventTypeId], references: [id], onDelete: Restrict)
+  host              User               @relation(fields: [hostId], references: [id], onDelete: Restrict)
+  rescheduledFrom   Booking?           @relation("BookingRescheduleChain", fields: [rescheduledFromId], references: [id], onDelete: SetNull)
+  rescheduledTo     Booking[]          @relation("BookingRescheduleChain")
+  auditLogs         BookingAuditLog[]
+
+  @@index([eventTypeId])
+  @@index([hostId])
+  @@index([startTime])
+  @@index([status])
+}
+
+model BookingAuditLog {
+  id          String                @id @default(cuid())
+  bookingId   String
+  actorType   BookingAuditActorType
+  actorUserId String?
+  action      BookingAuditAction
+  metadata    Json
+  createdAt   DateTime              @default(now())
+  booking     Booking               @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  actorUser   User?                 @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+}
+
+model CalendarAccount {
+  id                    String              @id @default(cuid())
+  userId                String
+  provider              CalendarProvider
+  accessTokenEncrypted  String
+  refreshTokenEncrypted String
+  expiresAt             DateTime
+  isPrimary             Boolean             @default(false)
+  externalAccountEmail  String
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  syncCursor            CalendarSyncCursor?
+}
+
+model CalendarSyncCursor {
+  id                String          @id @default(cuid())
+  calendarAccountId String          @unique
+  cursor            String
+  updatedAt         DateTime        @updatedAt
+  calendarAccount   CalendarAccount @relation(fields: [calendarAccountId], references: [id], onDelete: Cascade)
+}
+
+model NotificationDelivery {
+  id                String                     @id @default(cuid())
+  channel           String
+  template          String
+  recipient         String
+  provider          String
+  status            NotificationDeliveryStatus @default(PENDING)
+  providerMessageId String?
+  payload           Json
+  sentAt            DateTime?
+  failedAt          DateTime?
+  createdAt         DateTime                   @default(now())
+}
+
+model WebhookEndpoint {
+  id               String    @id @default(cuid())
+  userId           String
+  url              String
+  secret           String
+  subscribedEvents String[]
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

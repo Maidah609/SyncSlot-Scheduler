@@ -1,0 +1,4 @@
+export const NOTIFICATIONS_QUEUE_NAME = "notifications";
+export const NOTIFICATIONS_QUEUE_PREFIX = "syncslot";
+export const NOTIFICATIONS_QUEUE_TOKEN = Symbol("NOTIFICATIONS_QUEUE_TOKEN");
+export const EMAIL_PROVIDER_TOKEN = Symbol("EMAIL_PROVIDER_TOKEN");

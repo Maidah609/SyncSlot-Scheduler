@@ -9,7 +9,8 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "incremental": true
+    "rootDir": "./src",
+    "types": ["node", "luxon"]
   },
   "include": ["src/**/*.ts"]
 }

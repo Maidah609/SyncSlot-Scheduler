@@ -1,9 +1,16 @@
 node_modules
 .next
-dist
+**/dist/
 coverage
 .turbo
 .DS_Store
 .env
 .env.local
 pnpm-lock.yaml
+*.tsbuildinfo
+*.out.log
+*.err.log
+SyncSlot-Full-Spec.docx
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat

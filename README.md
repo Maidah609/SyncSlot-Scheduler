@@ -29,6 +29,8 @@ What was migrated:
 - The frontend is still mock-data backed, matching the current pre-backend state.
 - Some dashboard settings routes currently redirect to profile until their full page bodies are ported.
 - Package installation and runtime verification have not been completed in this workspace yet.
+- `apps/api` integration tests require a reachable Redis via `REDIS_URL` for BullMQ. Resend is mocked in the test suite and is never called.
+- Later hardening note: consider a dedicated test-only Redis target (local Docker, a fake such as `ioredis-mock`, or a second Upstash database) so CI does not depend on the shared dev Redis instance.
 
 ## Suggested next steps
 
